@@ -5,7 +5,7 @@ Gs = 0.02 #growth rate selfish
 Cc = 0.1 #consumption rate cooperative
 Cs = 0.2 #consumption rate selfish
 N = 4000 #population size 
-T = 1000 #number of genrations 
+T = 1000 #number of generations 
 K = 0.1 #death rate
 R_small = 4 #R for small groups
 R_large = 50 #R for large groups
@@ -22,11 +22,11 @@ def resource_received(ni, Gi, Ci, nj, Gj, Cj, R):
     ri = 0 
     return ri
 
-def equation2(ni, ri, Ci, K):
+def reproduce(ni, ri, Ci, K):
     return  ni + ri/Ci - K*ni
-    
 
 def main():
     print("Hello")
+    print(str(reproduce(24, 5, Cc, K)))
 
 if __name__ == "__main__": main()
