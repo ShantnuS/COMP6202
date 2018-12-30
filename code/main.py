@@ -17,6 +17,15 @@ R_large = 50 #R for large groups
 #Maintaining the global carrying capacity
 #Iteration 
 
+def resource_received(ni, Gi, Ci, nj, Gj, Cj, R):
+    #something
+    ri = 0 
+    return ri
+
+def equation2(ni, ri, Ci, K):
+    return  ni + ri/Ci - K*ni
+    
+
 def main():
     print("Hello")
 
