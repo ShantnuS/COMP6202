@@ -63,36 +63,123 @@ def create_groups(migrant_pool):
 
     return groups
 
-#Group formation 
 #Reproduction 
-#Migrant pool formation 
-#Maintaining the global carrying capacity
-#Iteration 
+def reproduce_individuals(groups):
+    small_groups = groups["small_groups"]
+    large_groups = groups["large_groups"]
 
-def resource_received(ni, Gi, Ci, nj, Gj, Cj, R):
-    #something
-    ri = 0 
-    return ri
+    # [10, 10, 00, 00]
+    for group in small_groups:
+        coop_num = group.count("10")
+        self_num = group.count("00")
+        for _ in range(t):
+            coop_sum = coop_num*Gc*Cc 
+            self_sum = self_num*Gs*Cs
 
-#Calculate the new population of each type of individual. ni = current population, ri = resouce received, Ci = consumption rate, K = death rate
+            ri_coop = resource_received(coop_sum,self_sum,R_small)
+            ri_self = resource_received(self_sum,coop_sum,R_small)
+
+            coop_num = replicate(coop_num,ri_coop,Cc,K)
+            self_num = replicate(self_num,ri_self,Cs,K)
+
+        group.clear()
+        coop_num = int(round(coop_num))
+        self_num = int(round(self_num))
+        for _ in range(coop_num):
+            group.append("10")
+
+        for _ in range(self_num):
+            group.append("00")    
+
+    
+    for group in large_groups:
+        coop_num = group.count("11")
+        self_num = group.count("01")
+        for _ in range(t):
+            coop_sum = coop_num*Gc*Cc 
+            self_sum = self_num*Gs*Cs
+
+            ri_coop = resource_received(coop_sum,self_sum,R_large)
+            ri_self = resource_received(self_sum,coop_sum,R_large)
+
+            coop_num = replicate(coop_num,ri_coop,Cc,K)
+            self_num = replicate(self_num,ri_self,Cs,K)
+
+        group.clear()
+        coop_num = int(round(coop_num))
+        self_num = int(round(self_num))
+        for _ in range(coop_num):
+            group.append("11")
+
+        for _ in range(self_num):
+            group.append("01") 
+     
+    groups = {
+        "small_groups":small_groups,
+        "large_groups":large_groups
+    }
+
+    return groups
+
+#Equation 1 
+def resource_received(top, bottom, R):
+    return (top)/(top+bottom) * R
+
+#Equation 2
 def replicate(ni, ri, Ci, K):
-    return  ni + ri/Ci - K*ni
+    return  ni + (ri/Ci) - (K*ni)
 
-#Not sure whether to call it replicate or reproduce so will use them interchangeably 
-def reproduce(ni, ri, Ci, K):
-    return replicate(ni, ri, Ci, K)
+#Dispersal
+def disperse_progeny(groups):
+    small_groups = groups["small_groups"]
+    large_groups = groups["large_groups"]
+
+    small_pool = [j for i in small_groups for j in i]
+    large_pool = [j for i in large_groups for j in i]
+
+    migrant_pool = large_pool + small_pool
+    return migrant_pool
+
+
+#Maintaining the global carrying capacity
+def resize_pool(migrant_pool):
+    total = len(migrant_pool)
+
+    cl_num = int(float(migrant_pool.count("11")/total)*N)
+    cs_num = int(float(migrant_pool.count("10")/total)*N)
+    sl_num = int(float(migrant_pool.count("01")/total)*N)
+    ss_num = int(float(migrant_pool.count("00")/total)*N)
+
+    cl_pool = ["11"]*cl_num
+    cs_pool = ["10"]*cs_num
+    sl_pool = ["01"]*sl_num
+    ss_pool = ["00"]*ss_num
+
+    new_pool = cl_pool + cs_pool + sl_pool + ss_pool
+    shuffle(new_pool)
+    return new_pool
 
 def run():
     print("Experiment Started!")
 
     #Initialise migrant pool
     migrant_pool = initialise_pool(N)
-    # for i in migrant_pool:
-    #     print(i)
 
-    #Form the groups
-    groups = create_groups(migrant_pool)
-    print(groups["large_groups"])
+    for _ in range(T):
+        #Form the groups
+        groups = create_groups(migrant_pool)
+
+        #Perform reproduction
+        groups = reproduce_individuals(groups)
+        
+        #disperse progeny into migrant pool
+        migrant_pool = disperse_progeny(groups)
+
+        #resize pool to maintain global carrying capacity
+        migrant_pool = resize_pool(migrant_pool)
+        print(migrant_pool.count("00"))
+
+
 
 
 if __name__ == "__main__":
