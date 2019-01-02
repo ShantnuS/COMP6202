@@ -1,12 +1,13 @@
 import time
 from random import shuffle
+import csv 
 
 Gc = 0.018 #growth rate cooperative
 Gs = 0.02 #growth rate selfish
 Cc = 0.1 #consumption rate cooperative
 Cs = 0.2 #consumption rate selfish
 N = 4000 #population size 
-T = 1000 #number of generations 
+T = 150 #number of generations 
 K = 0.1 #death rate
 R_small = 4 #R for small groups
 R_large = 50 #R for large groups
@@ -159,13 +160,33 @@ def resize_pool(migrant_pool):
     shuffle(new_pool)
     return new_pool
 
+def initialise_output(output_file):
+    with open(output_file, "w", newline='') as file:
+        myFields = ["Generation", "Cooperative+Large", "Cooperative+Small", "Selfish+Large", "Selfish+Small"]
+        writer = csv.DictWriter(file, fieldnames=myFields)   
+        writer.writeheader()
+        writer.writerow({"Generation":0, "Cooperative+Large":1000, "Cooperative+Small":1000, "Selfish+Large":1000, "Selfish+Small":1000})
+
+def output_results(output_file, migrant_pool, generation):
+    cl_num = migrant_pool.count("11")
+    cs_num = migrant_pool.count("10")
+    sl_num = migrant_pool.count("01")
+    ss_num = migrant_pool.count("00") 
+
+    with open(output_file, "a", newline='') as file:
+        myFields = ["Generation", "Cooperative+Large", "Cooperative+Small", "Selfish+Large", "Selfish+Small"]
+        writer = csv.DictWriter(file, fieldnames=myFields)   
+        writer.writerow({"Generation":generation, "Cooperative+Large":cl_num, "Cooperative+Small":cs_num, "Selfish+Large":sl_num, "Selfish+Small":ss_num})
+
 def run():
     print("Experiment Started!")
+    output_file = "output.csv"
+    initialise_output(output_file)
 
     #Initialise migrant pool
     migrant_pool = initialise_pool(N)
 
-    for _ in range(T):
+    for i in range(T):
         #Form the groups
         groups = create_groups(migrant_pool)
 
@@ -177,8 +198,11 @@ def run():
 
         #resize pool to maintain global carrying capacity
         migrant_pool = resize_pool(migrant_pool)
-        print(migrant_pool.count("00"))
 
+        #output results to csv
+        output_results(output_file,migrant_pool,i+1)
+
+    print("Experiment Finished!")
 
 
 
