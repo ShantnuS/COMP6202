@@ -15,9 +15,6 @@ L_size = 40 #size of the large group
 S_size = 4 #size of the small group
 allele_size = 8 #bitstring size not including Size parameter 
 
-#TODO: fix checking if individual exists with any number of 11s and 00s 
-#TODO: Resize migrant pool
-
 #splits a list into chunks!
 def chunks(l, n):
     # For item i in a range that is a length of l,
@@ -185,8 +182,7 @@ def run():
         migrant_pool = resize_pool(migrant_pool, genotypes)
 
         print(migrant_pool.count(genotypes[5]))
-
-
+        
     print("Extension Finished")
 
 
