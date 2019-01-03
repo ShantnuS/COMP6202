@@ -31,15 +31,19 @@ def scramble_individual(individual):
     shuffle(individual)
     return ''.join(individual)
 
+def sort_individual(individual):
+    genotype = list(individual[:allele_size])
+    genotype.sort()
+    return ''.join(genotype)+individual[-1:]
+
 #Initialise migrant pool
 def initialise_pool():
     pool = []
     while len(pool)<N:
-        for _ in range(2):
-            for i in range(allele_size):
-                individual = ("1"*(i+1)).zfill(allele_size)
-                pool.append(individual+"1")
-                pool.append(individual+"0")
+        for i in range(allele_size):
+            individual = ("1"*(i+1)).zfill(allele_size)
+            pool.append(individual+"1")
+            pool.append(individual+"0")
 
     shuffle(pool)
     return pool
@@ -93,6 +97,7 @@ def reproduce_group(group, R):
         reproduced_genotype.clear()
         result_group = []
         for individual in group:
+            individual = sort_individual(individual)
             if individual not in reproduced_genotype:
                 reproduced_genotype.append(individual)
                 individual_num = group.count(individual)
@@ -146,6 +151,8 @@ def run():
 
     #Migrant pool
     migrant_pool = initialise_pool()
+    print(migrant_pool)
+    exit(0)
 
     for i in range(T):
         #Form Groups
@@ -156,7 +163,6 @@ def run():
 
         #disperse progeny into migrant pool
         migrant_pool = disperse_progeny(groups)
-        print(migrant_pool)
 
         #resize pool to maintain global carrying capacity
         migrant_pool = resize_pool(migrant_pool)
