@@ -36,6 +36,14 @@ def sort_individual(individual):
     genotype.sort()
     return ''.join(genotype)+individual[-1:]
 
+def get_genotypes():
+    genotypes = []
+    for i in range(allele_size):
+            individual = ("1"*(i+1)).zfill(allele_size)
+            genotypes.append(individual+"1")
+            genotypes.append(individual+"0")
+    return genotypes
+
 #Initialise migrant pool
 def initialise_pool():
     pool = []
@@ -143,16 +151,25 @@ def disperse_progeny(groups):
     return migrant_pool
 
 #Resize Pool
-def resize_pool(migrant_pool):
-    return []
+def resize_pool(migrant_pool, genotypes):
+    total = len(migrant_pool)
+    output_pool = []
+    for genotype in genotypes:
+        genotype_num = migrant_pool.count(genotype)
+        genotype_prop = float(genotype_num/total)
+        to_add = int(N*genotype_prop)
+        for _ in range(to_add):
+            output_pool.append(genotype)
+    shuffle(output_pool)
+    return output_pool
 
 def run():
     print("Extension Started!")
 
+    genotypes = get_genotypes()
+
     #Migrant pool
     migrant_pool = initialise_pool()
-    print(migrant_pool)
-    exit(0)
 
     for i in range(T):
         #Form Groups
@@ -165,7 +182,9 @@ def run():
         migrant_pool = disperse_progeny(groups)
 
         #resize pool to maintain global carrying capacity
-        migrant_pool = resize_pool(migrant_pool)
+        migrant_pool = resize_pool(migrant_pool, genotypes)
+
+        print(migrant_pool.count(genotypes[5]))
 
 
     print("Extension Finished")
