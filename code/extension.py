@@ -15,6 +15,9 @@ L_size = 40 #size of the large group
 S_size = 4 #size of the small group
 allele_size = 8 #bitstring size not including Size parameter 
 
+#TODO: fix checking if individual exists with any number of 11s and 00s 
+#TODO: Resize migrant pool
+
 #splits a list into chunks!
 def chunks(l, n):
     # For item i in a range that is a length of l,
@@ -34,7 +37,7 @@ def initialise_pool():
     while len(pool)<N:
         for _ in range(2):
             for i in range(allele_size):
-                individual = scramble_individual(("1"*(i+1)).zfill(allele_size)) ##IS scamble necessary?!
+                individual = ("1"*(i+1)).zfill(allele_size)
                 pool.append(individual+"1")
                 pool.append(individual+"0")
 
@@ -136,7 +139,7 @@ def disperse_progeny(groups):
 
 #Resize Pool
 def resize_pool(migrant_pool):
-    
+    return []
 
 def run():
     print("Extension Started!")
