@@ -36,6 +36,7 @@ def initialise_pool():
                 pool.append(individual+"1")
                 pool.append(individual+"0")
 
+    shuffle(pool)
     return pool
 
 #Group formation 
