@@ -1,8 +1,10 @@
 from random import shuffle
 import csv
 
-Gbase = 0.018 #base G for a 11111111 individual
-Cbase = 0.1 #base C for a 11111111 individual
+Gmax = 0.02 #max G ( a 00000000 individual)
+Gbase = 0.018 #base G  (a 11111111 individual)
+Cmax = 0.2 #max C ( a 00000000 individual)
+Cbase = 0.1 #base C ( a 11111111 individual)
 N = 4000 #population size 
 T = 150 #number of generations 
 K = 0.1 #death rate
@@ -32,7 +34,7 @@ def initialise_pool():
     while len(pool)<N:
         for _ in range(2):
             for i in range(allele_size):
-                individual = scramble_individual(("1"*(i+1)).zfill(allele_size))
+                individual = scramble_individual(("1"*(i+1)).zfill(allele_size)) ##IS scamble necessary?!
                 pool.append(individual+"1")
                 pool.append(individual+"0")
 
@@ -60,12 +62,81 @@ def create_groups(migrant_pool):
     
     return groups
 
-def reproduce_individuals(groups):
-    return 0
+def calculate_G(individual):
+    steps = float((Gmax-Gbase)/allele_size)
+    return Gbase+(list(individual[:allele_size]).count("0"))*steps
+
+def calculate_C(individual):
+    steps = float((Cmax-Cbase)/allele_size)
+    return Cbase+(list(individual[:allele_size]).count("0"))*steps
+
+def calculate_bottom(group):
+    result = 0
+    for i in group:
+        result += calculate_G(i)*calculate_C(i)
+    return result
+
+def resource_received(top, bottom, R):
+    return (top/bottom * R)
+
+def repicate(ni, ri, Ci, K):
+    return ni + (ri/Ci) - (K*ni)
+
+#reproduce the group and return new group
+def reproduce_group(group, R):
+    reproduced_genotype = []
+    for _ in range(t):
+        bottom = calculate_bottom(group)
+        reproduced_genotype.clear()
+        result_group = []
+        for individual in group:
+            if individual not in reproduced_genotype:
+                reproduced_genotype.append(individual)
+                individual_num = group.count(individual)
+                individual_G = calculate_G(individual)
+                individual_C = calculate_C(individual)
+                ri = resource_received(individual_num*individual_C*individual_G, bottom, R)
+                new_num = repicate(individual_num, ri, individual_C, K)
+                for _ in range(int(round(new_num))):
+                    result_group.append(individual)
+        group = result_group       
+    return group
 
 #Perform Reproduction
+def reproduce_pool(groups):
+    small_groups = groups["small_groups"]
+    large_groups = groups["large_groups"]
+
+    output_small = []
+    output_large = []
+
+    for group in small_groups:
+        output_small.append(reproduce_group(group, R_small))
+
+    for group in large_groups:
+        output_large.append(reproduce_group(group, R_large))
+
+    groups = {
+        "small_groups":output_small,
+        "large_groups":output_large
+    }
+
+    return groups
+
 #Disperse Progeny
+def disperse_progeny(groups):
+    small_groups = groups["small_groups"]
+    large_groups = groups["large_groups"]
+
+    small_pool = [j for i in small_groups for j in i]
+    large_pool = [j for i in large_groups for j in i]
+
+    migrant_pool = large_pool + small_pool
+    return migrant_pool
+
 #Resize Pool
+def resize_pool(migrant_pool):
+    
 
 def run():
     print("Extension Started!")
@@ -73,9 +144,19 @@ def run():
     #Migrant pool
     migrant_pool = initialise_pool()
 
-    #Form Groups
-    groups = create_groups(migrant_pool)
-    print(groups["small_groups"][0])
+    for i in range(T):
+        #Form Groups
+        groups = create_groups(migrant_pool)
+
+        #Perform reproduction
+        groups = reproduce_pool(groups)
+
+        #disperse progeny into migrant pool
+        migrant_pool = disperse_progeny(groups)
+        print(migrant_pool)
+
+        #resize pool to maintain global carrying capacity
+        migrant_pool = resize_pool(migrant_pool)
 
 
     print("Extension Finished")
