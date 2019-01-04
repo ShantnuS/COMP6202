@@ -34,5 +34,20 @@ def get_genotypes():
             genotypes.append(individual+"S")
     return genotypes
 
-for i in get_genotypes():
-    print(i + " | " + "C: " + str(calculate_C(i)) + " | " + "G: " + str(calculate_G(i)))
+def get_genotypes2():
+    genotypes = []
+    individual = ("1"*(allele_size+1)).zfill(allele_size)
+    individual2 = ("1"*(0)).zfill(allele_size)
+    genotypes.append(individual2+"L")
+    genotypes.append(individual2+"S")
+    genotypes.append(individual+"L")
+    genotypes.append(individual+"S")
+    return genotypes
+
+def resource_received(top, bottom, R):
+    return (top/bottom) * R
+
+# for i in get_genotypes():
+#     print(i + " | " + "C: " + str(calculate_C(i)) + " | " + "G: " + str(calculate_G(i)))
+
+print(resource_received(2,2,4))
