@@ -160,15 +160,36 @@ def resize_pool(migrant_pool, genotypes):
     shuffle(output_pool)
     return output_pool
 
+def initialise_output(output_file, genotypes, migrant_pool):
+    with open(output_file, "w", newline='') as file:
+        myFields = genotypes
+        writer = csv.DictWriter(file, fieldnames=myFields)   
+        writer.writeheader()
+        row = {}
+        for i in genotypes:
+            row[i] = migrant_pool.count(i)
+        writer.writerow(row)
+
+def process_pool(output_file, migrant_pool, genotypes):
+        with open(output_file, "a", newline='') as file:
+            myFields = genotypes
+            writer = csv.DictWriter(file, fieldnames=myFields)
+            row = {}
+            for i in genotypes:
+                row[i] = migrant_pool.count(i)
+            writer.writerow(row)   
+
 def run():
     print("Extension Started!")
 
+    output_file = "output2.csv"
     genotypes = get_genotypes()
 
     #Migrant pool
     migrant_pool = initialise_pool()
+    initialise_output(output_file,genotypes,migrant_pool)
 
-    for i in range(T):
+    for _ in range(T):
         #Form Groups
         groups = create_groups(migrant_pool)
 
@@ -181,7 +202,7 @@ def run():
         #resize pool to maintain global carrying capacity
         migrant_pool = resize_pool(migrant_pool, genotypes)
 
-        print(migrant_pool.count(genotypes[5]))
+        process_pool(output_file,migrant_pool,genotypes)
         
     print("Extension Finished")
 
