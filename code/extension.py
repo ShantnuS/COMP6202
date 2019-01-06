@@ -98,9 +98,9 @@ def repicate(ni, ri, Ci, K):
 def reproduce_group(group, R):
     reproduced_genotype = []
     for _ in range(t):
-        bottom = calculate_bottom(group)
         reproduced_genotype.clear()
         result_group = []
+        bottom = calculate_bottom(group)
         for individual in group:
             individual = sort_individual(individual)
             if individual not in reproduced_genotype:
@@ -182,7 +182,7 @@ def process_pool(output_file, migrant_pool, genotypes):
 def run():
     print("Extension Started!")
 
-    output_file = "output4.csv"
+    output_file = "output2.csv"
     genotypes = get_genotypes()
 
     #Migrant pool
