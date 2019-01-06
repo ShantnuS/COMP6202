@@ -6,7 +6,7 @@ Gbase = 0.019 #base G  (a 11111111 individual)
 Cmax = 0.2 #max C ( a 00000000 individual)
 Cbase = 0.15 #base C ( a 11111111 individual)
 N = 4000 #population size 
-T = 200 #number of generations 
+T = 150 #number of generations 
 K = 0.1 #death rate
 R_small = 4 #R for small groups
 R_large = 50 #R for large groups
@@ -182,7 +182,7 @@ def process_pool(output_file, migrant_pool, genotypes):
 def run():
     print("Extension Started!")
 
-    output_file = "output2.csv"
+    output_file = "output4.csv"
     genotypes = get_genotypes()
 
     #Migrant pool

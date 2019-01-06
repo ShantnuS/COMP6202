@@ -10,7 +10,7 @@ R_large = 50 #R for large groups
 t = 4 #time spent in groups before dispersal 
 L_size = 40 #size of the large group
 S_size = 4 #size of the small group
-allele_size = 8 #bitstring size not including Size parameter 
+allele_size = 1 #bitstring size not including Size parameter 
 
 
 def sort_individual(individual):
@@ -47,7 +47,6 @@ def get_genotypes2():
 def resource_received(top, bottom, R):
     return (top/bottom) * R
 
-# for i in get_genotypes():
-#     print(i + " | " + "C: " + str(calculate_C(i)) + " | " + "G: " + str(calculate_G(i)))
+for i in get_genotypes():
+    print(i + " | " + "C: " + str(calculate_C(i)) + " | " + "G: " + str(calculate_G(i)))
 
-print(resource_received(2,2,4))
